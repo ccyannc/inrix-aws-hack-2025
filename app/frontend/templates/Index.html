@@ -1,21 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-  <h1>Effusion Detection</h1>
-  <p>Upload a lung X-ray image to analyze for pleural effusion using our trained model.</p>
-
-  <form action="/upload/" method="post" enctype="multipart/form-data">
+  <form action="/upload/" method="post" enctype="multipart/form-data" class="upload-form">
     {% csrf_token %}
     <div class="form-group">
-      <label for="file">Select X-ray image:</label>
       <input type="file" name="file" id="file" required />
     </div>
 
-    <button type="submit" class="btn">Analyze Image</button>
+    <button type="submit" class="analyze-btn">Analyze Image</button>
   </form>
 
   {% if message %}
-  <p class="message">{{ message|safe }}</p>
+  <p class="result-message">{{ message|safe }}</p>
   {% endif %}
 </div>
 
@@ -25,37 +21,43 @@
   margin-top: 50px;
 }
 
-h1 {
-  font-size: 2rem;
+label {
+  font-weight: 500;
+  color: #222;
+  display: block;
   margin-bottom: 10px;
-}
-
-p {
-  color: #444;
-  font-size: 1rem;
 }
 
 input[type="file"] {
   margin: 20px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 0.95rem;
 }
 
-.btn {
-  background-color: #007bff;
+.analyze-btn {
+  background-color: #ff002f;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 28px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: background-color 0.25s ease;
 }
 
-.btn:hover {
-  background-color: #0056b3;
+.analyze-btn:hover {
+  background-color: #ff002f;
 }
 
-.message {
+.result-message {
   margin-top: 20px;
-  color: green;
+  color: #007a33;
   font-weight: bold;
+  font-size: 1rem;
 }
 </style>
 {% endblock %}

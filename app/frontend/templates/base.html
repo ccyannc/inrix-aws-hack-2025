@@ -2,40 +2,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Effusion Detection App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f4f9fd 0%, #e3eafc 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .footer {
-            text-align: center;
-            margin-top: auto; /* Pushes footer to the bottom */
-            padding-top: 3vh;
-            padding-bottom: 3vh;
-            color: #8ea7c2;
-            font-size: 1.03rem;
-            width: 100%;
-        }
-    </style>
-    {% block extra_css %}{% endblock %}
+  <meta charset="UTF-8">
+  <title>Effusion Detection Model</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%);
+      font-family: "Poppins", "Inter", system-ui, sans-serif;
+      color: #222;
+      overflow-x: hidden;
+      opacity: 0;
+      animation: fadeInBody 1.2s ease-in forwards;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .page-section {
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    h1.page-title {
+      color: #8b0000;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+    }
+
+    form.upload-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    input[type="file"] {
+      display: block;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      max-width: 400px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    button, .analyze-btn {
+      background-color: #8b0000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: 500;
+      font-family: inherit;
+    }
+
+    button:hover, .analyze-btn:hover {
+      background-color: #a80000;
+    }
+
+    .preview-container {
+      margin-top: 15px;
+    }
+
+    #imagePreview {
+      max-width: 400px;
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+  </style>
 </head>
 <body>
+  <div class="page-section">
+    <h1 class="page-title">Effusion Detection Model</h1>
 
-    {% block content %}
-    {% endblock %}
+    <form class="upload-form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" id="fileInput" name="file" accept="image/*">
+      <div class="preview-container">
+        <img id="imagePreview" alt="Preview">
+      </div>
+      <button type="submit">Analyze Image</button>
+    </form>
+  </div>
 
-    <div class="footer">
-        &copy; 2025 X-Ray Uploader. Trusted for your peace of mind.
-    </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const fileInput = document.getElementById('fileInput');
+      const imagePreview = document.getElementById('imagePreview');
 
-    {% block extra_js %}{% endblock %}
+      fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) {
+          imagePreview.style.display = 'none';
+          imagePreview.src = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
 </body>
 </html>

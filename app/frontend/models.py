@@ -1,10 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User  # built-in Django user
+from django.contrib.auth.models import User
 
-# One-to-many relationship: one user -> many systems/uploads
 class UserSystem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="systems")
-    xray_image_url = models.URLField()   # or models.FileField if you store files locally
+    xray_image_url = models.URLField() 
     diagnosis = models.TextField(blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

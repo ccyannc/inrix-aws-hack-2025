@@ -1,4 +1,3 @@
-# frontend/predict_from_sagemaker.py
 import boto3, json
 
 def predict_from_sagemaker(image_path, endpoint_name="effusion-cnn-endpoint", region="us-east-1"):

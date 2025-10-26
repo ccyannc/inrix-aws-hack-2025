@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCU X-Ray Analyzer</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/three/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff;
+      font-family: "Poppins", "Inter", system-ui, sans-serif;
+      color: #222;
+      overflow: hidden;
+    }
+
+    h1, h2 {
+      opacity: 0;
+      text-align: center;
+      margin: 0;
+      animation: fadeIn 7s forwards;
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: 600;
+      animation-delay: 0s;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 400;
+      margin-top: 10px;
+      animation-delay: 3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #viewer {
+      width: 100%;
+      height: 400px;
+      margin-top: 40px;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .launch-btn {
+      margin-top: 60px;
+      padding: 22px 45px;
+      border: none;
+      border-radius: 10px;
+      font-size: 2.4rem;
+      background-color: #8b0000;
+      color: white;
+      cursor: pointer;
+      font-family: "Poppins", "Inter", sans-serif;
+      letter-spacing: 0.5px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .launch-btn:hover {
+      background-color: #a52a2a;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>AWS × INRIX Hack</h1>
+  <h2>Lung Diagnostics Model: Powered by Amazon SageMaker AI</h2>
+
+  <div id="viewer"></div>
+
+  <button class="launch-btn" onclick="window.location.href='{% url 'index' %}'">
+    Launch
+  </button>
+
+  <script>
+    window.onload = init;
+
+    let renderer, scene, camera, controls, model;
+
+    function init() {
+      const container = document.getElementById("viewer");
+
+      // Renderer (transparent background)
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setClearColor(0x000000, 0); // transparent
+      container.appendChild(renderer.domElement);
+
+      // Scene
+      scene = new THREE.Scene();
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(30, container.clientWidth / container.clientHeight, 0.1, 5000);
+      camera.position.set(0, 0, 700);
+      camera.lookAt(scene.position);
+
+      // Orbit Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 2;
+      controls.maxDistance = 700;
+
+      // Lighting
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(2, 2, 5);
+      scene.add(light);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+      // Load GLB (same folder)
+      const loader = new THREE.GLTFLoader();
+      loader.load("{% static 'models/lung_CT_scan.glb' %}",
+
+        function (gltf) {
+          model = gltf.scene;
+
+          // enable transparency
+          model.traverse(function (child) {
+            if (child.isMesh) {
+              child.material.transparent = true;
+              child.material.opacity = 0.3;
+              child.material.depthWrite = false;
+            }
+          });
+
+          scene.add(model);
+        },
+        undefined,
+        function (error) {
+          console.error('Error loading GLB:', error);
+        }
+      );
+
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      if (model) model.rotation.y += 0.002;
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+</html>
