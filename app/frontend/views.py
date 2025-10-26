@@ -20,4 +20,4 @@ def upload_file_view(request):
             message = "❌ Upload failed. Check server logs."
 
     # 👇 this must match the template filename exactly
-    return render(request, 'upload.html', {'message': message})
+    return render(request, 'index.html', {'message': message})
