@@ -1,86 +1,61 @@
 {% extends "base.html" %}
-{% block title %}Lung X-Ray Uploader{% endblock %}
 {% block content %}
-<div id="google-signin-section">
-    <div class="social-signin-outer">
-        <div class="social-signin-container">
-            <div class="service-title">Lung X-Ray Scanner</div>
-            <div class="subtitle-landing">Welcome! Continue with one click.</div>
-            <div class="about-service">
-                Instantly scan and analyze your lung X-rays.<br>
-                Upload your medical X-ray image and receive fast, private, AI-assisted insights—all from the comfort of your device.
-            </div>
-            <div class="signin-prompt">Secure, easy, and confidential.</div>
-            <form class="login-form" onsubmit="loginAndGo(event)">
-                <input type="text" class="form-control mb-2" id="username" placeholder="Username" required>
-                <input type="password" class="form-control mb-2" id="password" placeholder="Password" required>
-                <button class="btn btn-primary" type="submit">Enter</button>
-            </form>
-            <button class="google-btn" onclick="return false;">
-                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" class="google-logo">
-                Continue with Google
-            </button>
-            <div class="signin-note">Quick and secure sign-in using your Google account.</div>
-        </div>
+<div class="container">
+  <h1>Effusion Detection</h1>
+  <p>Upload a lung X-ray image to analyze for pleural effusion using our trained model.</p>
+
+  <form action="/upload/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="file">Select X-ray image:</label>
+      <input type="file" name="file" id="file" required />
     </div>
+
+    <button type="submit" class="btn">Analyze Image</button>
+  </form>
+
+  {% if message %}
+  <p class="message">{{ message|safe }}</p>
+  {% endif %}
 </div>
 
-<div id="upload-section" style="display:none;">
-    <div class="card-uploader">
-        <div class="text-center mb-2">
-            <span class="brand">Lung X-Ray Scanner</span>
-        </div>
-        <div class="welcome text-center">Upload Your X-Ray</div>
-        <div class="sub text-center">
-            Upload and analyze your lung scan—medical privacy guaranteed.
-        </div>
-
-        <!-- Connects directly to Django's /upload/ view -->
-        <form action="{% url 'upload_file' %}" method="POST" enctype="multipart/form-data" class="mb-0">
-            {% csrf_token %}
-            <label class="form-label"><strong>Choose an X-ray image (JPG, PNG, or DICOM):</strong></label>
-            <div class="input-group mb-2">
-                <input class="form-control" type="file" name="file" accept="image/*,.dcm" required onchange="updateFileLabel(event);previewImage(event)">
-            </div>
-            <div id="filename-display" class="filename-display">No file chosen</div>
-            <img id="preview" src="" alt="" class="preview-img" style="display: none;">
-            <button class="btn btn-primary w-100 mt-3" type="submit">Upload X-Ray</button>
-        </form>
-
-        {% if message %}
-            <p class="note text-center mt-3">{{ message|safe }}</p>
-        {% endif %}
-        <p class="note text-center">Supported: .jpg, .jpeg, .png, .dcm (DICOM)</p>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function loginAndGo(event) {
-    event.preventDefault();
-    document.getElementById('google-signin-section').style.display = 'none';
-    document.getElementById('upload-section').style.display = 'block';
+<style>
+.container {
+  text-align: center;
+  margin-top: 50px;
 }
-function updateFileLabel(event) {
-    var fileInput = event.target;
-    var display = document.getElementById('filename-display');
-    if (fileInput.files && fileInput.files.length > 0) {
-        display.textContent = fileInput.files[0].name;
-    } else {
-        display.textContent = "No file chosen";
-    }
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
 }
-function previewImage(event) {
-    var output = document.getElementById('preview');
-    var file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-        output.src = URL.createObjectURL(file);
-        output.style.display = 'block';
-    } else {
-        output.style.display = 'none';
-        output.src = '';
-    }
+
+p {
+  color: #444;
+  font-size: 1rem;
 }
-</script>
+
+input[type="file"] {
+  margin: 20px 0;
+}
+
+.btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.message {
+  margin-top: 20px;
+  color: green;
+  font-weight: bold;
+}
+</style>
 {% endblock %}
