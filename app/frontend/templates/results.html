@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="result-container">
+  <div class="card">
+    <h1>{{ title }}</h1>
+    <p>{{ info }}</p>
+    <p><strong>Model Confidence:</strong> {{ confidence }}</p>
+    <a href="{% url 'index' %}" class="home-btn">Back to Home</a>
+  </div>
+</div>
+
+<style>
+.result-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  text-align: center;
+  width: 450px;
+}
+
+.card h1 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.card p {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.home-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.home-btn:hover {
+  background-color: #0056b3;
+}
+</style>
+{% endblock %}
